@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/teacher.html">Teacher Dashboard</a> 
+        <a href="/student.html">Student Dashboard</a>
+        <a href="/auth/logout">Logout</a>
+    </nav>
+    
+
+    <title>School App</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <script>
+        async function fetchSession() {
+            const response = await fetch('/auth/session');
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('greeting').textContent = `Welcome, ${data.username} (${data.role})`;
+            }
+        }
+        fetchSession();
+    </script>
+    
+  
+
+</head>
+<body>
+    <h1>Welcome to the School App</h1> <h1 id="greeting">Welcome</h1>
+    <a href="/login.html">Login</a>
+    <br>
+    <a href="/admin.html">Admin Dashboard</a>
+    <br>
+    <a href="/teacher.html">Teacher Dashboard</a>
+    <br>
+    <a href="/student.html">Student Dashboard</a>
+</body>
+</html>
