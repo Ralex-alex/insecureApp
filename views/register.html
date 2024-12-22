@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  <nav>
+    <a href="/">Home</a> |
+    <a href="/teacher.html">Teacher Dashboard</a> 
+    <a href="/student.html">Student Dashboard</a>
+    <a href="/admin.html">Admin Dashboard</a>
+    <a href="/auth/logout">Logout</a>
+  </nav>
+  
+  <title>Register</title>
+</head>
+<body>
+  <h1>Register</h1>
+  <form action="/auth/register" method="post">
+    <label>Username:</label>
+    <input type="text" name="username" required>
+    <br><br>
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+    <br><br>
+
+    <!-- Option 1: Default everyone to 'student' role -->
+    <input type="hidden" name="role" value="student">
+
+    <!-- 
+    // Option 2: Let them pick role
+    // <label>Role:</label>
+    // <select name="role">
+    //   <option value="student">Student</option>
+    //   <option value="teacher">Teacher</option>
+    //   <option value="admin">Admin</option>
+    // </select>
+    // <br><br>
+    -->
+
+    <button type="submit">Register</button>
+  </form>
+</body>
+</html>

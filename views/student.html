@@ -1,66 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
-
-    <<nav>
+    <nav>
         <a href="/">Home</a> |
-        <a href="/teacher.html">Teacher Dashboard</a> 
-        <a href="/student.html">Student Dashboard</a>
+        <a href="/teacher.html">Teacher Dashboard</a>
+        <a href="/admin.html">Admin Dashboard</a>
         <a href="/auth/logout">Logout</a>
     </nav>
-    
+    <title>Student Dashboard</title>
     <script>
-        async function fetchSession() {
-            const response = await fetch('/auth/session');
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('greeting').textContent = `Welcome, ${data.username} (${data.role})`;
+        async function fetchCourses() {
+            const response = await fetch('/student/viewCourses');
+            if (!response.ok) {
+                return alert('Error fetching courses.');
             }
-        }
-        fetchSession();
-    </script>
-
-    <script>
-    async function fetchCourses() {
-        const response = await fetch('/student/viewCourses');
-        if (response.ok) {
             const courses = await response.json();
             const container = document.getElementById('courses-container');
-            container.innerHTML = '';
-            courses.forEach(course => {
-                const courseDiv = document.createElement('div');
-                courseDiv.textContent = `Course: ${course.name}, Teacher: ${course.teacher_name}`;
-                container.appendChild(courseDiv);
+            container.innerHTML = '<h3>All Courses:</h3>';
+            courses.forEach(c => {
+                const div = document.createElement('div');
+                div.textContent = `Course: ${c.course_name}, Teacher ID: ${c.teacher_id}`;
+                container.appendChild(div);
             });
-        } else {
-            alert('Error fetching courses.');
         }
-    }
-</script>
 
-    <title>Student Dashboard</title>
-    <h1>Student Dashboard</h1>
-    <h1 id="greeting">Welcome</h1>
+        async function fetchAssignments() {
+            const courseName = document.getElementById('course_name').value;
+            const response = await fetch(`/student/viewAssignments?course_name=${encodeURIComponent(courseName)}`);
+            if (!response.ok) {
+                return alert('Error fetching assignments.');
+            }
+            const assignments = await response.json();
+            const container = document.getElementById('assignments-container');
+            container.innerHTML = `<h3>Assignments for ${courseName}:</h3>`;
+            assignments.forEach(a => {
+                const div = document.createElement('div');
+                div.textContent = `Title: ${a.title}, Description: ${a.description}`;
+                container.appendChild(div);
+            });
+        }
+    </script>
 </head>
 <body>
-   
-    <form action="/student/viewTimetable" method="get">
-        <label for="student_id">Your Student ID:</label>
-        <input type="number" id="student_id" name="student_id" required>
-        <br>
-        <button type="submit">View Timetable</button>
-    </form>
+    <h1>Student Dashboard</h1>
 
-    
-    <form action="/student/viewAssignments" method="get">
-        <h2>View Assignments</h2>
-        <label for="student_id">Your Student ID:</label>
-        <input type="number" id="student_id" name="student_id" required>
-        <br>
-        <button type="submit">View Assignments</button>
-    </form>
+    <button onclick="fetchCourses()">View Courses</button>
+    <div id="courses-container" style="margin: 15px 0;"></div>
 
+    <hr>
+    <h2>View Assignments By Course</h2>
+    <input type="text" id="course_name" placeholder="e.g. 'Computing'">
+    <button onclick="fetchAssignments()">View Assignments</button>
+    <div id="assignments-container" style="margin-top: 15px;"></div>
 </body>
 </html>

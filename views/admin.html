@@ -2,134 +2,75 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
-
     <nav>
         <a href="/">Home</a> |
-        <a href="/teacher.html">Teacher Dashboard</a> 
+        <a href="/teacher.html">Teacher Dashboard</a>
         <a href="/student.html">Student Dashboard</a>
-        <a href="/">Logout</a>
+        <a href="/auth/logout">Logout</a>
     </nav>
-    
-    
-
     <title>Admin Dashboard</title>
-  
-   <script>
-    const params = new URLSearchParams(window.location.search);
-    const message = params.get('message');
-
-    if (message) {
-        // Create a success message div
-        const messageDiv = document.createElement('div');
-        messageDiv.textContent = message;
-        messageDiv.style.color = 'green';
-        messageDiv.style.padding = '10px';
-        messageDiv.style.marginBottom = '10px';
-        messageDiv.style.border = '1px solid green';
-        messageDiv.style.backgroundColor = '#eaffea';
-        messageDiv.style.textAlign = 'center';
-
-        // Append it to the body
-        document.body.prepend(messageDiv);
-
-        // Remove the message after 5 seconds
-        setTimeout(() => {
-            messageDiv.remove();
-            // Optionally, remove the query parameter from the URL
-            const url = new URL(window.location.href);
-            url.searchParams.delete('message');
-            window.history.replaceState({}, document.title, url.toString());
-        }, 5000); // 5000ms = 5 seconds
-    }
-</script>
-
-    
     <script>
+        const params = new URLSearchParams(window.location.search);
+        const message = params.get('message');
+
+        if (message) {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = message;
+            msgDiv.style.color = 'green';
+            msgDiv.style.padding = '10px';
+            msgDiv.style.marginBottom = '10px';
+            msgDiv.style.border = '1px solid green';
+            msgDiv.style.backgroundColor = '#eaffea';
+            msgDiv.style.textAlign = 'center';
+            document.body.prepend(msgDiv);
+
+            setTimeout(() => {
+                msgDiv.remove();
+                const url = new URL(window.location.href);
+                url.searchParams.delete('message');
+                window.history.replaceState({}, document.title, url.toString());
+            }, 5000);
+        }
+
         async function fetchLogs() {
             const response = await fetch('/admin/viewLogs');
-            if (response.ok) {
-                const data = await response.json();
-                const logsContainer = document.getElementById('logs-container');
-                logsContainer.innerHTML = ''; // Clear previous logs
-                data.logs.forEach(log => {
-                    const logEntry = document.createElement('div');
-                    logEntry.textContent = log;
-                    logsContainer.appendChild(logEntry);
-                });
-            } else {
-                alert('Error fetching logs.');
+            if (!response.ok) {
+                return alert('Error fetching logs.');
             }
+            const data = await response.json();
+            const logsContainer = document.getElementById('logs-container');
+            logsContainer.innerHTML = '';
+            data.logs.forEach(log => {
+                const div = document.createElement('div');
+                div.textContent = log;
+                logsContainer.appendChild(div);
+            });
+        }
+
+        async function fetchUsers() {
+            const response = await fetch('/admin/viewUsers');
+            if (!response.ok) {
+                return alert('Error fetching users.');
+            }
+            const users = await response.json();
+            const container = document.getElementById('users-container');
+            container.innerHTML = '<h3>Users List:</h3>';
+            users.forEach(u => {
+                const userDiv = document.createElement('div');
+                userDiv.textContent = `ID: ${u.user_id}, Username: ${u.username}, Role: ${u.role}, TeacherID: ${u.teacher_id}`;
+                container.appendChild(userDiv);
+            });
         }
     </script>
-    
 </head>
-
 <body>
     <h1>Admin Dashboard</h1>
 
     <!-- Add User -->
     <form action="/admin/addUser" method="post">
         <h2>Add User</h2>
-        <label for="id">Teacher ID (Leave blank for students):</label>
+        <label for="id">Teacher ID (only if role=teacher):</label>
         <input type="number" id="id" name="id">
-        <br>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <label for="role">Role:</label>
-        <select id="role" name="role">
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-        </select>
-        <br>
-        <button type="submit">Add User</button>
-    </form>
-
-    <hr>
-
-    <!-- Add Course -->
-    <form action="/admin/addCourse" method="post">
-        <h2>Add Course</h2>
-        <label for="name">Course Name:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="teacher_id">Teacher ID:</label>
-        <input type="number" id="teacher_id" name="teacher_id" required>
-        <br>
-        <button type="submit">Add Course</button>
-    </form>
-
-    <hr>
-
-    <!-- Delete User -->
-    <form action="/admin/removeUser" method="post">
-        <h2>Delete User</h2>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <button type="submit">Delete User</button>
-    </form>
-
-    <hr>
-
-    <!-- Delete Course -->
-    <form action="/admin/removeCourse" method="post">
-        <h2>Delete Course</h2>
-        <label for="name">Course Name:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <button type="submit">Delete Course</button>
-    </form>
-
-    <hr>
-    
-    <form action="/admin/editUser" method="post">
-        <h2>Edit User Details</h2>
-        <label for="id">User ID:</label>
-        <input type="number" id="id" name="id" required>
         <br>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
@@ -144,43 +85,80 @@
             <option value="admin">Admin</option>
         </select>
         <br>
-        <button type="submit">Edit User</button>
+        <button type="submit">Add User</button>
     </form>
 
     <hr>
 
+    <!-- Add Course -->
+    <form action="/admin/addCourse" method="post">
+        <h2>Add Course</h2>
+        <label for="name">Course Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="teacher_id">Teacher ID:</label>
+        <input type="number" id="teacher_id" name="teacher_id">
+        <br>
+        <button type="submit">Add Course</button>
+    </form>
+
+    <hr>
+
+    <!-- Delete User -->
+    <form action="/admin/removeUser" method="post">
+        <h2>Delete User</h2>
+        <label for="username2">Username:</label>
+        <input type="text" id="username2" name="username" required>
+        <br>
+        <button type="submit">Delete User</button>
+    </form>
+
+    <hr>
+
+    <!-- Delete Course -->
+    <form action="/admin/removeCourse" method="post">
+        <h2>Delete Course</h2>
+        <label for="name2">Course Name:</label>
+        <input type="text" id="name2" name="name" required>
+        <br>
+        <button type="submit">Delete Course</button>
+    </form>
+
+    <hr>
+    <!-- Edit User Details -->
+    <form action="/admin/editUser" method="post">
+        <h2>Edit User Details</h2>
+        <label>Teacher ID (if teacher):</label>
+        <input type="number" name="id">
+        <br>
+        <label for="username3">Username:</label>
+        <input type="text" id="username3" name="username" required>
+        <br>
+        <label for="password3">Password:</label>
+        <input type="password" id="password3" name="password" required>
+        <br>
+        <label for="role3">Role:</label>
+        <select id="role3" name="role">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+        </select>
+        <br>
+        <button type="submit">Edit User</button>
+    </form>
+
+    <hr>
     <h2>View All Users</h2>
     <button onclick="fetchUsers()">View Users</button>
-    <div id="users-container" style="margin-top: 20px; border: 1px solid #ddd; padding: 10px; background: #fff;">
-        <!-- Users will be displayed here -->
+    <div id="users-container"
+         style="margin-top: 20px; border: 1px solid #ddd; padding: 10px; background: #fff;">
     </div>
 
-    <script>
-        async function fetchUsers() {
-            const response = await fetch('/admin/viewUsers');
-            if (response.ok) {
-                const users = await response.json();
-                const container = document.getElementById('users-container');
-                container.innerHTML = '<h3>Users List:</h3>';
-                users.forEach(user => {
-                    const userDiv = document.createElement('div');
-                    userDiv.textContent = `ID: ${user.id}, Username: ${user.username}, Role: ${user.role}`;
-                    container.appendChild(userDiv);
-                });
-            } else {
-                alert('Error fetching users.');
-            }
-        }
-    </script>
-
-
-
-    <!-- View Logs -->
+    <hr>
     <h2>Server Logs</h2>
     <button onclick="fetchLogs()">View Logs</button>
-    <div id="logs-container" style="margin-top: 20px; border: 1px solid #000; padding: 10px; height: 300px; overflow-y: auto;">
-        <!-- Logs will appear here -->
+    <div id="logs-container"
+         style="margin-top: 20px; border: 1px solid #000; padding: 10px; height: 300px; overflow-y: auto;">
     </div>
-
 </body>
 </html>

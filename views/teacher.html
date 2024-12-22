@@ -2,66 +2,49 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
-    
     <nav>
         <a href="/">Home</a> |
-        <a href="/teacher.html">Teacher Dashboard</a> 
+        <a href="/admin.html">Admin Dashboard</a>
         <a href="/student.html">Student Dashboard</a>
         <a href="/auth/logout">Logout</a>
     </nav>
-
-    <script>
-        async function fetchSession() {
-            const response = await fetch('/auth/session');
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('greeting').textContent = `Welcome, ${data.username} (${data.role})`;
-            }
-        }
-        fetchSession();
-    </script>
-    
     <title>Teacher Dashboard</title>
 </head>
-
-
 <body>
-    <h1>Teacher Dashboard</h1> <h1 id="greeting">Welcome</h1>
+    <h1>Teacher Dashboard</h1>
+
     <form action="/teacher/viewCourses" method="get">
-        <label for="teacher_id">Your Teacher :</label>
+        <label for="teacher_id">Your Teacher ID:</label>
         <input type="number" id="teacher_id" name="teacher_id" required>
         <br>
         <button type="submit">View Courses</button>
     </form>
+
     <hr>
     <form action="/teacher/editCourse" method="post">
-        <h2>Edit Course</h2>
-        <label for="id">Course ID:</label>
-        <input type="number" id="id" name="id" required>
+        <h2>Rename Course</h2>
+        <label for="old_name">Old Course Name:</label>
+        <input type="text" id="old_name" name="old_name" required>
         <br>
-        <label for="name">New Course Name:</label>
-        <input type="text" id="name" name="name" required>
+        <label for="new_name">New Course Name:</label>
+        <input type="text" id="new_name" name="new_name" required>
         <br>
         <button type="submit">Edit Course</button>
     </form>
 
-    >
-<form action="/teacher/addAssignment" method="post">
-    <h2>Add Assignment</h2>
-    <label for="course_id">Course ID:</label>
-    <input type="number" id="course_id" name="course_id" required>
-    <br>
-    <label for="title">Assignment Title:</label>
-    <input type="text" id="title" name="title" required>
-    <br>
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" required></textarea>
-    <br>
-    <button type="submit">Add Assignment</button>
-</form>
-
-
-
-
+    <hr>
+    <form action="/teacher/addAssignment" method="post">
+        <h2>Add Assignment</h2>
+        <label for="course_name">Course Name:</label>
+        <input type="text" id="course_name" name="course_name" required>
+        <br>
+        <label for="title">Assignment Title:</label>
+        <input type="text" id="title" name="title" required>
+        <br>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+        <br>
+        <button type="submit">Add Assignment</button>
+    </form>
 </body>
 </html>
