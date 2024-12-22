@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+   
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/teacher.html">Teacher Dashboard</a> 
+        <a href="/student.html">Student Dashboard</a>
+        <a href="/auth/logout">Logout</a>
+    </nav>
+    
+
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form action="/auth/login" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+
+    
+</body>
+
+<script>
+    // After page loads, fetch the CSRF token and inject it
+    fetch('/auth/getCsrf')
+      .then(res => res.json())
+      .then(data => {
+        // data.csrfToken is our token
+        const form = document.getElementById('loginForm');
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = '_csrf';
+        hidden.value = data.csrfToken;
+        form.appendChild(hidden);
+      })
+      .catch(err => console.error('CSRF fetch error:', err));
+  </script>
+  
+</html>
